@@ -24,8 +24,9 @@ opencv-python-headless==4.11.0.86
 Pillow==11.2.1
 
 # --- Core Dependencies of the Above Libraries ---
-numpy==2.2.6
+numpy==1.26.4
 PyYAML==6.0.2
 requests==2.32.3
 
 tqdm==4.67.1
+
