@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SceneSolver | AI-Powered Forensic Analysis</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Fonts as specified by the user: Poppins for headings, Inter for body -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Define deep blue color variables based on user's request */
+        :root {
+            --color-deep-blue-bg: #0d1117; /* Very dark background from user's snippet */
+            --color-primary-blue: #0f56eb; /* The specific deep blue requested */
+            --color-secondary-blue-light: #3b82f6; /* A slightly lighter shade for hover/accents */
+            --color-glass-bg-dark: rgba(13, 17, 23, 0.6); /* Darker glass background from user's snippet */
+            --color-glass-border-light: rgba(48, 54, 61, 0.5); /* Border from user's snippet */
+        }
+
+        /* Base styles and theme setup */
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #e5e7eb; /* Light gray text from user's snippet */
+            background-color: var(--color-deep-blue-bg); /* Deep deep blue background */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Custom font for headings - using Poppins as per user's provided snippet */
+        .font-poppins {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Canvas for background animation - subtle blue glow */
+        #background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-color: var(--color-deep-blue-bg); /* Ensure consistent background */
+            filter: brightness(1.2) contrast(1.4); /* Made it pop out a little more */
+        }
+
+        /* Refined Glassmorphism effect for cards and sections */
+        .glass-effect {
+            background: var(--color-glass-bg-dark); /* Deeper, more opaque glass */
+            backdrop-filter: blur(15px); /* Blur from user's snippet */
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--color-glass-border-light); /* Softer white border */
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* Shadow from user's snippet */
+        }
+
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-deep-blue-bg); } /* Deep blue/black track */
+        ::-webkit-scrollbar-thumb { background: var(--color-primary-blue); border-radius: 10px; } /* Deeper blue thumb */
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-secondary-blue-light); } /* Darker blue on hover */
+
+        /* Fade-in animation for page load */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUpAnimation 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeInUpAnimation {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Buttons with deep blue gradient and white text */
+        .btn-primary-glow {
+            background: linear-gradient(to right, var(--color-primary-blue), #1976d2); /* Using the requested blue */
+            color: #ffffff;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            padding: 0.8rem 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(15, 86, 235, 0.4), 0 0 30px rgba(15, 86, 235, 0.2); /* Adjusted shadow for new blue */
+        }
+        .btn-primary-glow:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 25px rgba(15, 86, 235, 0.6), 0 0 45px rgba(15, 86, 235, 0.4); /* Adjusted shadow for new blue */
+        }
+        .btn-primary-glow:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 0 10px rgba(15, 86, 235, 0.4);
+        }
+
+        /* Navigation specific styles */
+        .navbar {
+            background: rgba(13, 17, 23, 0.7); /* Background from user's snippet */
+            backdrop-filter: blur(20px); /* Blur from user's snippet */
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--color-glass-border-light); /* Border from user's snippet */
+        }
+        .nav-link {
+            color: #e5e7eb; /* Color from user's snippet */
+            font-weight: 500; /* Font weight from user's snippet */
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+        .nav-link:hover {
+            color: var(--color-secondary-blue-light); /* Hover color to lighter blue */
+            transform: translateY(-2px);
+        }
+        .logo-text {
+            color: #ffffff; /* White text for logo */
+            text-shadow: 0 0 8px rgba(15, 86, 235, 0.7); /* Glow for logo text using new blue */
+        }
+        .logo-icon {
+            color: var(--color-primary-blue); /* Icon color using new blue */
+            filter: drop-shadow(0 0 5px var(--color-primary-blue)); /* Drop shadow using new blue */
+        }
+
+        /* Feature card specific styles */
+        .feature-card {
+            background: rgba(22, 27, 34, 0.4); /* Background from user's snippet */
+            border: 1px solid var(--color-glass-border-light); /* Border from user's snippet */
+            border-radius: 1rem; /* Border radius from user's snippet */
+            padding: 2rem; /* Padding from user's snippet */
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px); /* Lift on hover from user's snippet */
+            border-color: rgba(15, 86, 235, 0.5); /* Border color on hover using new blue */
+            box-shadow: 0 12px 25px rgba(0,0,0,0.4); /* Stronger shadow on hover */
+        }
+        .feature-icon-bg {
+            background-color: rgba(15, 86, 235, 0.1); /* Background color using new blue with opacity */
+            color: var(--color-primary-blue); /* Icon color using new blue */
+        }
+
+        /* Hero section (now 'Try SceneSolver' section) styles */
+        .try-scenesolver-section { /* Renamed from .hero-section */
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 4rem; /* Space for fixed navbar */
+        }
+
+        #hero-slideshow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* Below content */
+        }
+        .hero-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out; /* Smooth fade */
+        }
+        .hero-slide.active {
+            opacity: 1;
+        }
+        #hero-slideshow::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 17, 23, 0.6); /* Dark overlay for text readability from user's snippet */
+            z-index: 2; /* Between slideshow and content */
+        }
+        .try-content { /* Renamed from .hero-content */
+            position: relative;
+            z-index: 3;
+            max-width: 900px;
+            padding: 2rem;
+        }
+
+        /* Initial loading state for hero section */
+        .hero-loading-overlay {
+            position: fixed; /* Covers entire viewport */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--color-deep-blue-bg); /* Deep blue/black background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #e5e5e5;
+            z-index: 100; /* Ensure it's on top of everything initially */
+            opacity: 1;
+            transition: opacity 1s ease-out;
+            pointer-events: all; /* Ensure it blocks interaction */
+        }
+        .hero-loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none; /* Allow interaction once hidden */
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: #0d1117; /* Background from user's snippet */
+            border-top: 1px solid rgba(48, 54, 61, 0.5); /* Border from user's snippet */
+            color: #9ca3af; /* Color from user's snippet */
+        }
+        footer .text-gray-300 {
+            color: #9ca3af; /* Match footer text color */
+        }
+        footer a {
+            color: #9ca3af; /* Default link color in footer */
+            transition: color 0.3s ease;
+        }
+        footer a:hover {
+            color: var(--color-secondary-blue-light); /* Hover color to lighter blue */
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <canvas id="background-animation"></canvas>
+
+    <!-- Initial Loading Overlay -->
+    <div id="loading-overlay" class="hero-loading-overlay">
+        <h1 class="font-poppins text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-widest uppercase text-glow-white mb-6 animate-pulse">
+            SceneSolver
+        </h1>
+        <p class="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto text-center">
+            AI-powered forensic intelligence transforming crime scene analysis.
+            Please wait while we prepare the experience...
+        </p>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar fixed w-full z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <a href="{{ url_for('frontpage') }}" class="flex items-center group">
+                    <svg class="h-8 w-8 logo-icon group-hover:rotate-12 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span class="ml-3 text-2xl font-poppins font-bold tracking-wider logo-text">SceneSolver</span>
+                </a>
+                <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
+                    <a href="{{ url_for('frontpage') }}" class="nav-link px-3 py-2 text-sm font-medium">Home</a>
+                    <a href="#features" class="nav-link px-3 py-2 text-sm font-medium">Features</a>
+                    <a href="{{ url_for('feedback') }}" class="nav-link px-3 py-2 text-sm font-medium">Feedback</a>
+                    <div class="relative">
+                        <button id="profileDropdownBtn" class="flex items-center space-x-2 nav-link px-3 py-2 text-sm font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <span id="profileUsername"></span>
+                        </button>
+                        <div id="profileDropdown" class="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 z-20 hidden glass-effect">
+                            <span id="dropdownUsername" class="block px-4 py-2 text-sm text-gray-300 border-b border-gray-700">{{ username }}</span>
+                            <a href="{{ url_for('history') }}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">History</a>
+                            <a href="{{ url_for('logout') }}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">Log out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+        <!-- New Introduction Section -->
+        <section id="intro" class="relative z-10 py-24 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center justify-center text-center">
+            <div class="glass-effect rounded-3xl p-8 sm:p-12 max-w-4xl mx-auto fade-in-up">
+                <h1 class="font-poppins text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-wide mb-6 leading-tight">
+                    Welcome to <br class="sm:hidden">SceneSolver
+                </h1>
+                <p class="font-poppins text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+                    Hello, {{ username }}!
+                </p>
+                <p class="text-lg md:text-xl text-gray-400 leading-relaxed mt-4">
+                    At SceneSolver, we are dedicated to revolutionizing forensic investigations through the power of artificial intelligence. Our platform provides law enforcement and forensic analysts with advanced tools to quickly and accurately process complex crime scene data. From automated crime detection to precise evidence extraction and comprehensive report generation, SceneSolver streamlines the entire analytical workflow, enabling faster case resolution and more informed decision-making. We believe in empowering investigators with cutting-edge technology to uncover the truth more efficiently than ever before.
+                </p>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="relative z-10 py-20 px-4 sm:px-6 lg:px-8 pt-10"> <!-- Reduced top padding -->
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16 fade-in-up">
+                    <h2 class="font-poppins text-3xl md:text-4xl font-bold text-white tracking-wide">
+                        Powerful Forensic Analysis Tools
+                    </h2>
+                    <p class="mt-6 max-w-3xl text-xl text-gray-400 mx-auto leading-relaxed">
+                        SceneSolver provides law enforcement with cutting-edge capabilities to process crime scenes faster and more accurately.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                    <div class="feature-card text-center flex flex-col items-center fade-in-up" style="animation-delay: 0.1s;">
+                        <div class="feature-icon-bg flex items-center justify-center h-16 w-16 rounded-full mb-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-3">Automated Crime Detection</h3>
+                        <p class="text-base text-gray-400 leading-relaxed">
+                            Our AI identifies and tags potential crimes like robbery, shoplifting with high accuracy.
+                        </p>
+                    </div>
+
+                    <div class="feature-card text-center flex flex-col items-center fade-in-up" style="animation-delay: 0.2s;">
+                        <div class="feature-icon-bg flex items-center justify-center h-16 w-16 rounded-full mb-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.555-4.555A2 2 0 0121 7.243v9.514a2 2 0 01-2 2H5a2 2 0 01-2-2V7.243a2 2 0 01.445-1.298L9 10m6-5l-6 6M9 5l-6 6" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-3">Evidence Extraction</h3>
+                        <p class="text-base text-gray-400 leading-relaxed">
+                            Our AI identifies and tags potential pieces of evidence like persons, knives, and bloodstains with high accuracy.
+                        </p>
+                    </div>
+
+                    <div class="feature-card text-center flex flex-col items-center fade-in-up" style="animation-delay: 0.3s;">
+                        <div class="feature-icon-bg flex items-center justify-center h-16 w-16 rounded-full mb-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-3">Comprehensive Reports</h3>
+                        <p class="text-base text-gray-400 leading-relaxed">
+                            Generate detailed forensic reports including crime classification, timeline estimation, evidence catalog, and summary generation.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Try SceneSolver Section (with Slideshow and Button) -->
+        <section class="try-scenesolver-section relative z-10 py-16 px-4 sm:px-6 lg:px-8">
+            <div id="hero-slideshow"></div> {# Slideshow container #}
+            <div class="glass-effect rounded-3xl p-6 sm:p-10 try-content fade-in-up">
+                <h2 class="font-poppins text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-wide mb-8 leading-tight">
+                    Experience SceneSolver AI
+                </h2>
+                <p class="text-xl text-gray-300 mb-10 leading-relaxed">
+                    Our platform is designed to provide you with a seamless and powerful forensic analysis experience. Upload your evidence and witness the future of crime scene investigation.
+                </p>
+                <a href="{{ url_for('index') }}" class="btn-primary-glow inline-flex items-center justify-center px-8 py-3 rounded-xl font-bold text-lg transition-all duration-300 ease-in-out transform hover:scale-105">
+                    <span>Start Your Analysis</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-3 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 py-12 px-4 sm:px-6 lg:px-8 mt-auto">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center md:text-left">
+                <div>
+                    <h3 class="text-gray-300 text-sm font-semibold tracking-wider uppercase mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{{ url_for('frontpage') }}" class="text-gray-400 hover:text-white transition-colors duration-200">Home</a></li>
+                        <li><a href="#features" class="text-gray-400 hover:text-white transition-colors duration-200">Features</a></li>
+                        <li><a href="{{ url_for('history') }}" class="text-gray-400 hover:text-white transition-colors duration-200">History</a></li>
+                        <li><a href="{{ url_for('feedback') }}" class="text-gray-400 hover:text-white transition-colors duration-200">Feedback</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-gray-300 text-sm font-semibold tracking-wider uppercase mb-4">Legal</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Security</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-gray-300 text-sm font-semibold tracking-wider uppercase mb-4">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="md:col-span-1 text-center md:text-right">
+                    <h3 class="text-gray-300 text-sm font-semibold tracking-wider uppercase mb-4">Connect</h3>
+                    <div class="flex justify-center md:justify-end space-x-6">
+                        <a href="#" class="text-gray-500 hover:text-white transition-colors duration-200">
+                            <span class="sr-only">Twitter</span>
+                            <svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-white transition-colors duration-200">
+                            <span class="sr-only">GitHub</span>
+                            <svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.62.069-.62 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12 border-t border-gray-700/20 pt-8 text-center">
+                <p class="text-gray-500 text-sm">
+                    &copy; 2023 SceneSolver. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- Plexus (Connecting Dots) Background Animation ---
+        const canvas = document.getElementById('background-animation');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let numParticles;
+        let mouse = { x: null, y: null, radius: 150 }; // Mouse interaction radius
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            numParticles = Math.floor((canvas.width * canvas.height) / 8000); /* Adjusted particle density for subtlety */
+            initParticles(); // Re-initialize particles on resize
+        }
+
+        class Particle {
+            constructor(x, y, vx, vy, radius) {
+                this.x = x || Math.random() * canvas.width;
+                this.y = y || Math.random() * canvas.height;
+                this.vx = vx || (Math.random() - 0.5) * 0.2; /* Slower movement for subtlety */
+                this.vy = vy || (Math.random() - 0.5) * 0.2;
+                this.radius = radius || Math.random() * 1.5 + 0.5; /* Smaller particles for subtlety */
+                this.baseRadius = this.radius; // Store initial radius
+                this.alpha = Math.random() * 0.6 + 0.3; /* Brighter initial opacity for particles */
+            }
+            update() {
+                // Bounce off edges
+                if (this.x + this.radius > canvas.width || this.x - this.radius < 0) this.vx *= -1;
+                if (this.y + this.radius > canvas.height || this.y - this.radius < 0) this.vy *= -1;
+
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Mouse interaction: particles push away
+                if (mouse.x && mouse.y) {
+                    const dx = this.x - mouse.x;
+                    const dy = this.y - mouse.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < mouse.radius) {
+                        const forceDirectionX = dx / dist;
+                        const forceDirectionY = dy / dist;
+                        const maxForce = mouse.radius / dist;
+                        const directionX = forceDirectionX * 0.5; /* Softer push */
+                        const directionY = forceDirectionY * 0.5;
+
+                        // Apply a gentle push
+                        this.x += directionX;
+                        this.y += directionY;
+                    }
+                }
+
+                // Restore original radius if not near mouse
+                if (this.radius > this.baseRadius) {
+                    this.radius -= 0.05;
+                    if (this.radius < this.baseRadius) this.radius = this.baseRadius;
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(15, 86, 235, ${this.alpha})`; /* Blue particles */
+                ctx.shadowColor = `rgba(15, 86, 235, ${this.alpha * 1.0})`; /* Blue shadow, more intense */
+                ctx.shadowBlur = this.radius * 3; /* More blur for brighter glow */
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < numParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function connectParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const maxConnectDist = 120; /* Reduced connection distance for subtlety */
+
+                    if (dist < maxConnectDist) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(15, 86, 235, ${0.4 - (dist / maxConnectDist) * 0.4})`; /* Blue lines, subtle opacity */
+                        ctx.lineWidth = 0.8; /* Thinner lines for subtlety */
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateBackground() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            connectParticles();
+            requestAnimationFrame(animateBackground);
+        }
+
+        // --- Slideshow Logic ---
+        const slideshowContainer = document.getElementById('hero-slideshow');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const images = [
+            'https://images.pexels.com/photos/2157191/pexels-photo-2157191.jpeg',
+            'https://images.pexels.com/photos/8369521/pexels-photo-8369521.jpeg',
+            'https://images.pexels.com/photos/8369515/pexels-photo-8369515.jpeg',
+            'https://images.pexels.com/photos/6069606/pexels-photo-6069606.jpeg'
+        ];
+        let currentImageIndex = 0;
+        let loadedImagesCount = 0;
+
+        function preloadImages() {
+            images.forEach((src) => {
+                const img = new Image();
+                img.src = src;
+                img.onload = () => {
+                    loadedImagesCount++;
+                    if (loadedImagesCount === images.length) {
+                        // All images loaded, hide overlay and start slideshow
+                        loadingOverlay.classList.add('hidden');
+                        startSlideshow();
+                    }
+                };
+                img.onerror = () => {
+                    console.error(`Failed to load image: ${src}`);
+                    // Still count it so slideshow can eventually start even if an image fails
+                    loadedImagesCount++; 
+                    if (loadedImagesCount === images.length) {
+                        loadingOverlay.classList.add('hidden');
+                        startSlideshow();
+                    }
+                };
+            });
+        }
+
+        function startSlideshow() {
+            // Create slide divs
+            images.forEach((src, index) => {
+                const slideDiv = document.createElement('div');
+                slideDiv.classList.add('hero-slide');
+                slideDiv.style.backgroundImage = `url('${src}')`;
+                slideshowContainer.appendChild(slideDiv);
+            });
+
+            const slides = slideshowContainer.querySelectorAll('.hero-slide');
+            if (slides.length > 0) {
+                slides[0].classList.add('active');
+                setInterval(() => {
+                    slides[currentImageIndex].classList.remove('active');
+                    currentImageIndex = (currentImageIndex + 1) % slides.length;
+                    slides[currentImageIndex].classList.add('active');
+                }, 5000); // Change image every 5 seconds
+            }
+        }
+
+
+        window.addEventListener('load', () => {
+            // Initialize background animation
+            resizeCanvas();
+            initParticles();
+            animateBackground();
+
+            // Start preloading images and managing overlay
+            preloadImages();
+        });
+
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('mousemove', (event) => {
+            mouse.x = event.x;
+            mouse.y = event.y;
+        });
+        window.addEventListener('mouseout', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Profile dropdown functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileDropdownBtn = document.getElementById('profileDropdownBtn');
+            const profileDropdown = document.getElementById('profileDropdown');
+            const profileUsernameSpan = document.getElementById('profileUsername');
+            const dropdownUsernameSpan = document.getElementById('dropdownUsername');
+
+            // Use username from Flask session (passed as template variable)
+            const username = "{{ username }}";
+
+            if (profileUsernameSpan) {
+                profileUsernameSpan.textContent = username;
+            }
+            if (dropdownUsernameSpan) {
+                dropdownUsernameSpan.textContent = username;
+            }
+
+            if (profileDropdownBtn && profileDropdown) {
+                profileDropdownBtn.addEventListener('click', function(event) {
+                    event.stopPropagation(); // Prevent click from bubbling up to window
+                    profileDropdown.classList.toggle('hidden');
+                });
+
+                // Close the dropdown if the user clicks outside of it
+                window.addEventListener('click', function(event) {
+                    if (!profileDropdownBtn.contains(event.target) && !profileDropdown.contains(event.target)) {
+                        profileDropdown.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

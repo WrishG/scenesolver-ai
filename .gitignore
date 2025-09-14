@@ -1,0 +1,21 @@
+# Python virtual environment and cache files
+venv/
+__pycache__/
+
+# Large model files - DO NOT TRACK
+# This line already ignores the entire models folder, including models/drafts/
+models/
+
+# Generated output from YOLO
+yolo_detections/
+
+# Drafts folder within the scripts directory
+scripts/drafts/
+
+# Uploaded user videos
+static/uploads/
+
+# IDE and OS specific files
+.vscode/
+.idea/
+*.DS_Store

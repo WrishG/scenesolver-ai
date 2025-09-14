@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SceneSolver — Evidence Upload</title>
+
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: 'Poppins' for headings, 'Inter' for body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <style>
+        /* Define deep blue color variables based on user's request */
+        :root {
+            --color-deep-blue-bg: #0d1117; /* Very dark background */
+            --color-primary-blue: #0f56eb; /* Primary blue */
+            --color-secondary-blue-light: #3b82f6; /* Lighter shade for hover/accents */
+            --color-glass-bg-dark: rgba(13, 17, 23, 0.6); /* Darker glass background */
+            --color-glass-border-light: rgba(48, 54, 61, 0.5); /* Border */
+        }
+
+        /* Base styles and theme setup */
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #e5e7eb;
+            background-color: var(--color-deep-blue-bg);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Custom font for headings */
+        .font-poppins {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Canvas for background animation */
+        #background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-color: var(--color-deep-blue-bg);
+            filter: brightness(1.2) contrast(1.4); /* Made it pop out a little more */
+        }
+
+        /* Glassmorphism effect for the main card */
+        .glass-card {
+            background: var(--color-glass-bg-dark);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--color-glass-border-light);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            animation: cardFadeIn 1s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+        @keyframes cardFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Buttons with deep blue gradient and white text */
+        .btn-primary-glow {
+            background: linear-gradient(to right, var(--color-primary-blue), #1976d2);
+            color: #ffffff;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            padding: 0.8rem 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(15, 86, 235, 0.4), 0 0 30px rgba(15, 86, 235, 0.2);
+        }
+        .btn-primary-glow:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 25px rgba(15, 86, 235, 0.6), 0 0 45px rgba(15, 86, 235, 0.4);
+        }
+        .btn-primary-glow:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 0 10px rgba(15, 86, 235, 0.4);
+        }
+
+        /* Navigation specific styles */
+        .navbar {
+            background: rgba(13, 17, 23, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--color-glass-border-light);
+        }
+        .nav-link {
+            color: #e5e7eb;
+            font-weight: 500;
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+        .nav-link:hover {
+            color: var(--color-secondary-blue-light);
+            transform: translateY(-2px);
+        }
+        .logo-text {
+            color: #ffffff;
+            /* Removed text-shadow for cleaner look */
+        }
+        .logo-icon {
+            color: var(--color-primary-blue); /* Ensure blue color */
+            filter: drop-shadow(0 0 5px var(--color-primary-blue)); /* Drop shadow using new blue */
+        }
+
+        /* Video preview container styling */
+        #videoPreviewContainer {
+            border: 1px solid var(--color-glass-border-light);
+            background-color: rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 150px;
+            overflow: hidden;
+            position: relative;
+            animation: previewFadeIn 0.5s ease-out forwards;
+        }
+        @keyframes previewFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #videoPreview {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(15, 86, 235, 0.4), 0 0 20px rgba(15, 86, 235, 0.1);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        #videoPreview:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 15px rgba(15, 86, 235, 0.6), 0 0 30px rgba(15, 86, 235, 0.2);
+        }
+
+        /* Message box animation */
+        #messageBox {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        /* Flash message box styling */
+        .flash-message-success {
+            background-color: rgba(0, 128, 0, 0.3);
+            color: #90ee90;
+        }
+        .flash-message-error {
+            background-color: rgba(128, 0, 0, 0.3);
+            color: #ff6347;
+        }
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-deep-blue-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--color-primary-blue); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-secondary-blue-light); }
+    </style>
+</head>
+<body class="antialiased">
+    <canvas id="background-animation"></canvas>
+    <!-- Navigation Header -->
+    <nav class="navbar fixed top-0 w-full z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <a href="{{ url_for('frontpage') }}" class="flex items-center group">
+                    <svg class="h-8 w-8 logo-icon group-hover:rotate-12 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span class="ml-3 text-2xl font-poppins font-bold tracking-wider logo-text">SceneSolver</span>
+                </a>
+                <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
+                    <a href="{{ url_for('frontpage') }}" class="nav-link px-3 py-2 text-sm font-medium">Home</a>
+                    <a href="{{ url_for('index') }}" class="nav-link px-3 py-2 text-sm font-medium">Upload</a>
+                    <a href="{{ url_for('history') }}" class="nav-link px-3 py-2 text-sm font-medium">History</a>
+                    <a href="{{ url_for('feedback') }}" class="nav-link px-3 py-2 text-sm font-medium">Feedback</a>
+                    <div class="relative">
+                        <button id="profileDropdownBtn" class="flex items-center space-x-2 nav-link px-3 py-2 text-sm font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <span id="profileUsername">{{ username }}</span>
+                        </button>
+                        <div id="profileDropdown" class="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 z-20 hidden glass-effect">
+                            <span id="dropdownUsername" class="block px-4 py-2 text-sm text-gray-300 border-b border-gray-700">{{ username }}</span>
+                            <a href="{{ url_for('history') }}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">History</a>
+                            <a href="{{ url_for('logout') }}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">Log out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="relative z-10 flex flex-col items-center justify-center p-4 min-h-screen w-full pt-20">
+        <div class="glass-card rounded-3xl shadow-2xl p-6 sm:p-10 max-w-xl w-full text-center animate__animated animate__fadeIn">
+            <header class="mb-8">
+                <h1 class="font-poppins text-3xl md:text-4xl font-bold text-white tracking-widest uppercase">
+                    SceneSolver
+                </h1>
+                <p class="text-gray-400 mt-2 text-sm md:text-base">Upload forensic evidence for AI analysis.</p>
+            </header>
+
+            <!-- Display Flask messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div id="flashMessageBox" class="mt-4 p-3 rounded-lg animate__animated animate__fadeInUp {% if category == 'error' %}flash-message-error{% else %}flash-message-success{% endif %}" role="alert">
+                        {% for category, message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form action="/index" method="POST" enctype="multipart/form-data" class="mb-8">
+                <label for="video_file" class="block text-left text-lg font-semibold mb-3 text-white">
+                    Select Evidence Video:
+                </label>
+                <input type="file" id="video_file" name="video_file" accept="video/*" required
+                        class="block w-full text-sm text-gray-300
+                             bg-gray-700/50 rounded-lg cursor-pointer focus:outline-none
+                             file:mr-4 file:py-2 file:px-4
+                             file:rounded-full file:border-0
+                             file:text-sm file:font-semibold
+                             file:bg-[var(--color-primary-blue)] file:text-white /* Primary blue button with white text */
+                             hover:file:bg-secondary-blue-light hover:file:cursor-pointer" />
+                
+                <!-- Video Preview Container -->
+                <div id="videoPreviewContainer" class="mt-6 p-2 rounded-lg hidden">
+                    <video id="videoPreview" src="#" controls class="w-full h-auto rounded-md"></video>
+                    <p id="videoPreviewText" class="text-gray-500 italic text-sm mt-2 hidden">No video selected</p>
+                </div>
+
+                <button type="submit" class="mt-8 w-full btn-primary-glow font-bold py-3 px-8 rounded-xl transition-all duration-300 ease-in-out transform flex items-center justify-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    <span>Analyze Evidence</span>
+                </button>
+            </form>
+
+            <!-- Message box for client-side feedback (now separate from Flask flash messages) -->
+            <div id="messageBox" class="mt-4 p-3 bg-red-600/30 text-red-200 rounded-lg hidden" role="alert">
+                <p id="messageText"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Plexus (Connecting Dots) Background Animation ---
+            const canvas = document.getElementById('background-animation');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let numParticles;
+            let mouse = { x: null, y: null, radius: 150 }; // Mouse interaction radius
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                numParticles = Math.floor((canvas.width * canvas.height) / 8000); /* Adjusted particle density for subtlety */
+                initParticles();
+            }
+
+            class Particle {
+                constructor(x, y, vx, vy, radius) {
+                    this.x = x || Math.random() * canvas.width;
+                    this.y = y || Math.random() * canvas.height;
+                    this.vx = vx || (Math.random() - 0.5) * 0.2; /* Slower movement for subtlety */
+                    this.vy = vy || (Math.random() - 0.5) * 0.2;
+                    this.radius = radius || Math.random() * 1.5 + 0.5; /* Smaller particles for subtlety */
+                    this.baseRadius = this.radius;
+                    this.alpha = Math.random() * 0.6 + 0.3; /* Brighter initial opacity for particles */
+                }
+
+                update() {
+                    if (this.x + this.radius > canvas.width || this.x - this.radius < 0) this.vx *= -1;
+                    if (this.y + this.radius > canvas.height || this.y - this.radius < 0) this.vy *= -1;
+
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    // Mouse interaction
+                    if (mouse.x && mouse.y) {
+                        const dx = this.x - mouse.x;
+                        const dy = this.y - mouse.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < mouse.radius) {
+                            const forceDirectionX = dx / dist;
+                            const forceDirectionY = dy / dist;
+                            const maxForce = mouse.radius / dist;
+                            const directionX = forceDirectionX * 0.5; /* Softer push */
+                            const directionY = forceDirectionY * 0.5;
+
+                            this.x += directionX;
+                            this.y += directionY;
+                        }
+                    }
+
+                    // Twinkling effect (subtle alpha change)
+                    this.alpha += (Math.random() - 0.5) * 0.02; /* Faster twinkling */
+                    if (this.alpha > 1) this.alpha = 1;
+                    if (this.alpha < 0.3) this.alpha = 0.3;
+
+                    // Return to base size if expanded by mouse
+                    if (this.radius > this.baseRadius) {
+                        this.radius -= 0.05;
+                        if (this.radius < this.baseRadius) this.radius = this.baseRadius;
+                    }
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(15, 86, 235, ${this.alpha})`; /* Blue particles */
+                    ctx.shadowColor = `rgba(15, 86, 235, ${this.alpha * 1.0})`; /* Blue shadow, more intense */
+                    ctx.shadowBlur = this.radius * 3; /* More blur for brighter glow */
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            }
+
+            function initParticles() {
+                particles = [];
+                for (let i = 0; i < numParticles; i++) {
+                    particles.push(new Particle());
+                }
+            }
+
+            function connectParticles() {
+                const maxConnectDist = 120; /* Reduced connection distance for subtlety */
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < maxConnectDist) {
+                            ctx.beginPath();
+                            ctx.strokeStyle = `rgba(15, 86, 235, ${0.4 - (dist / maxConnectDist) * 0.4})`; /* Blue lines, subtle opacity */
+                            ctx.lineWidth = 0.8; /* Thinner lines for subtlety */
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                connectParticles();
+                requestAnimationFrame(animate);
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            window.addEventListener('mousemove', (event) => {
+                mouse.x = event.x;
+                mouse.y = event.y;
+            });
+            window.addEventListener('mouseout', () => {
+                mouse.x = null;
+                mouse.y = null;
+            });
+
+            resizeCanvas();
+            initParticles();
+            animate();
+
+            const videoInput = document.getElementById('video_file');
+            const messageBox = document.getElementById('messageBox');
+            const messageText = document.getElementById('messageText');
+            const videoPreviewContainer = document.getElementById('videoPreviewContainer');
+            const videoPreview = document.getElementById('videoPreview');
+            const videoPreviewText = document.getElementById('videoPreviewText');
+
+            // Function to show client-side messages
+            function showClientMessage(message, isError = false) {
+                messageText.textContent = message;
+                messageBox.classList.remove('hidden', 'animate__fadeOut');
+                messageBox.classList.add('animate__animated', 'animate__fadeInUp');
+
+                if (isError) {
+                    messageBox.classList.add('bg-red-600/30', 'text-red-200');
+                    messageBox.classList.remove('bg-green-600/30', 'text-green-200');
+                } else {
+                    messageBox.classList.add('bg-green-600/30', 'text-green-200');
+                    messageBox.classList.remove('bg-red-600/30', 'text-red-200');
+                }
+                setTimeout(() => {
+                    messageBox.classList.remove('animate__fadeInUp');
+                    messageBox.classList.add('animate__fadeOut');
+                }, 5000);
+            }
+
+            videoInput.addEventListener('change', (event) => {
+                if (event.target.files.length > 0) {
+                    const file = event.target.files[0];
+                    const fileURL = URL.createObjectURL(file); // Create a URL for the selected video file
+
+                    videoPreview.src = fileURL;
+                    videoPreviewContainer.classList.remove('hidden');
+                    videoPreview.classList.remove('hidden'); // Ensure video element is visible
+                    videoPreviewText.classList.add('hidden');
+                    videoPreviewContainer.style.animation = 'none'; // Reset animation
+                    void videoPreviewContainer.offsetWidth; // Trigger reflow
+                    videoPreviewContainer.style.animation = 'previewFadeIn 0.5s ease-out forwards'; // Re-apply
+                    showClientMessage('Video selected for preview.', false);
+                } else {
+                    videoPreviewContainer.classList.add('hidden');
+                    videoPreview.src = '#'; // Clear previous video
+                    videoPreviewText.classList.remove('hidden');
+                    showClientMessage('No video selected.', true);
+                }
+            });
+
+            // Initial state for video preview
+            videoPreviewContainer.classList.add('hidden');
+            videoPreviewText.classList.remove('hidden');
+
+            // Handle Flask flashed messages on page load
+            const flashMessageBox = document.getElementById('flashMessageBox');
+            if (flashMessageBox) {
+                flashMessageBox.classList.add('animate__animated', 'animate__fadeInDown');
+                setTimeout(() => {
+                    flashMessageBox.classList.remove('animate__fadeInDown');
+                    flashMessageBox.classList.add('animate__fadeOut');
+                    // Remove element after fade out to clean up DOM
+                    setTimeout(() => flashMessageBox.remove(), 1000);
+                }, 7000); // Display Flask message longer
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SceneSolver — Sign In</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* Define deep blue color variables based on user's request */
+        :root {
+            --color-deep-blue-bg: #0d1117; /* Very dark background */
+            --color-primary-blue: #0f56eb; /* Primary blue */
+            --color-secondary-blue-light: #3b82f6; /* Lighter shade for hover/accents */
+            --color-glass-bg-dark: rgba(13, 17, 23, 0.6); /* Darker glass background */
+            --color-glass-border-light: rgba(48, 54, 61, 0.5); /* Border */
+        }
+
+        /* Base styles and theme setup */
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #e5e7eb;
+            background-color: var(--color-deep-blue-bg);
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Custom font for headings */
+        .font-poppins {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Canvas for background animation */
+        #background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-color: var(--color-deep-blue-bg);
+            filter: brightness(1.2) contrast(1.4); /* Made it pop out a little more */
+        }
+
+        /* Glassmorphism effect for the main card */
+        .glass-card {
+            background: var(--color-glass-bg-dark);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--color-glass-border-light);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: cardFadeIn 1s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+
+        /* Keyframe for card entrance animation */
+        @keyframes cardFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-deep-blue-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--color-primary-blue); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-secondary-blue-light); }
+
+        /* Simple fade-in animation for page load */
+        .fade-in {
+            opacity: 0;
+            animation: fadeInAnimation 1s ease-in-out forwards;
+        }
+
+        @keyframes fadeInAnimation {
+            to { opacity: 1; }
+        }
+
+        /* Buttons with deep blue gradient and white text */
+        .btn-primary-glow {
+            background: linear-gradient(to right, var(--color-primary-blue), #1976d2);
+            color: #ffffff;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            padding: 0.8rem 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(15, 86, 235, 0.4), 0 0 30px rgba(15, 86, 235, 0.2);
+        }
+        .btn-primary-glow:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 25px rgba(15, 86, 235, 0.6), 0 0 45px rgba(15, 86, 235, 0.4);
+        }
+        .btn-primary-glow:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 0 10px rgba(15, 86, 235, 0.4);
+        }
+
+        .input-field {
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #e5e7eb;
+            transition: all 0.3s ease;
+        }
+        .input-field:focus {
+            border-color: var(--color-primary-blue);
+            box-shadow: 0 0 10px rgba(15, 86, 235, 0.4);
+            outline: none;
+        }
+        /* Flash message box styling */
+        .flash-message-success {
+            background-color: rgba(0, 128, 0, 0.3);
+            color: #90ee90;
+        }
+        .flash-message-error {
+            background-color: rgba(128, 0, 0, 0.3);
+            color: #ff6347;
+        }
+
+        /* Navbar styling */
+        .navbar {
+            background: var(--color-glass-bg-dark);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--color-glass-border-light);
+        }
+        /* ONLY CHANGE: Set the stroke color of the logo icon to primary blue */
+        .logo-icon {
+            stroke: var(--color-primary-blue); 
+        }
+        .logo-text {
+            color: white;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <canvas id="background-animation"></canvas>
+     <nav class="navbar fixed top-0 w-full z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <a href="{{ url_for('frontpage') }}" class="flex items-center group">
+                    <svg class="h-8 w-8 logo-icon group-hover:rotate-12 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span class="ml-3 text-2xl font-poppins font-bold tracking-wider logo-text">SceneSolver</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="relative z-10 flex flex-col items-center justify-center p-4 min-h-screen w-full pt-20">
+        <div class="glass-card rounded-3xl shadow-2xl p-6 sm:p-10 max-w-md w-full text-center fade-in">
+            <header class="mb-8">
+                <h1 class="font-poppins text-3xl md:text-4xl font-bold text-white tracking-widest uppercase">
+                    Sign In
+                </h1>
+                <p class="text-gray-400 mt-2 text-sm md:text-base">Sign in to your forensic analysis portal.</p>
+            </header>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="mb-4 p-3 rounded-lg {% if category == 'error' %}flash-message-error{% else %}flash-message-success{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form id="signinForm" method="POST" class="space-y-6"> 
+                <div>
+                    <label for="username" class="block text-left text-lg font-semibold mb-2 text-gray-300">
+                        Username
+                    </label>
+                    <input type="username" id="username" name="username" required
+                           class="input-field block w-full p-3 rounded-lg focus:ring-primary-blue focus:border-primary-blue"
+                           >
+                </div>
+
+                <div>
+                    <label for="password" class="block text-left text-lg font-semibold mb-2 text-gray-300">
+                        Password
+                    </label>
+                    <input type="password" id="password" name="password" required
+                           class="input-field block w-full p-3 rounded-lg focus:ring-primary-blue focus:border-primary-blue"
+                          >
+                </div>
+
+                <button type="submit" class="mt-8 w-full btn-primary-glow font-bold py-3 px-8 rounded-xl transition-all duration-300 ease-in-out transform hover:scale-105 shadow-xl flex items-center justify-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
+                    <span>Sign In</span>
+                </button>
+            </form>
+
+            <div class="mt-6 text-gray-400 text-sm">
+                <p>Don't have an account? <a href="{{ url_for('register') }}" class="text-primary-blue hover:text-secondary-blue-light font-medium">Register here</a></p>
+                <p class="mt-2"><a href="#" class="text-primary-blue hover:text-secondary-blue-light font-medium">Forgot password?</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Plexus (Connecting Dots) Background Animation ---
+        const canvas = document.getElementById('background-animation');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let numParticles;
+        let mouse = { x: null, y: null, radius: 150 }; // Mouse interaction radius
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            numParticles = Math.floor((canvas.width * canvas.height) / 8000); /* Adjusted particle density for subtlety */
+            initParticles();
+        }
+
+        class Particle {
+            constructor(x, y, vx, vy, radius) {
+                this.x = x || Math.random() * canvas.width;
+                this.y = y || Math.random() * canvas.height;
+                this.vx = vx || (Math.random() - 0.5) * 0.2; /* Slower movement for subtlety */
+                this.vy = vy || (Math.random() - 0.5) * 0.2;
+                this.radius = radius || Math.random() * 1.5 + 0.5; /* Smaller particles for subtlety */
+                this.baseRadius = this.radius;
+                this.alpha = Math.random() * 0.6 + 0.3; /* Brighter initial opacity for particles */
+            }
+            update() {
+                // Bounce off edges
+                if (this.x + this.radius > canvas.width || this.x - this.radius < 0) this.vx *= -1;
+                if (this.y + this.radius > canvas.height || this.y - this.radius < 0) this.vy *= -1;
+
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Mouse interaction: particles push away
+                if (mouse.x && mouse.y) {
+                    const dx = this.x - mouse.x;
+                    const dy = this.y - mouse.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < mouse.radius) {
+                        const forceDirectionX = dx / dist;
+                        const forceDirectionY = dy / dist;
+                        const maxForce = mouse.radius / dist;
+                        const directionX = forceDirectionX * 0.5; /* Softer push */
+                        const directionY = forceDirectionY * 0.5;
+
+                        // Apply a gentle push
+                        this.x += directionX;
+                        this.y += directionY;
+                    }
+                }
+
+                // Restore original radius if not near mouse
+                if (this.radius > this.baseRadius) {
+                    this.radius -= 0.05;
+                    if (this.radius < this.baseRadius) this.radius = this.baseRadius;
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(15, 86, 235, ${this.alpha})`; /* Blue particles */
+                ctx.shadowColor = `rgba(15, 86, 235, ${this.alpha * 1.0})`; /* Blue shadow, more intense */
+                ctx.shadowBlur = this.radius * 3; /* More blur for brighter glow */
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < numParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function connectParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const maxConnectDist = 120; /* Reduced connection distance for subtlety */
+
+                    if (dist < maxConnectDist) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(15, 86, 235, ${0.4 - (dist / maxConnectDist) * 0.4})`; /* Blue lines, subtle opacity */
+                        ctx.lineWidth = 0.8; /* Thinner lines for subtlety */
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            connectParticles();
+            requestAnimationFrame(animate);
+        }
+
+        // Event Listeners for canvas and mouse interaction
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('mousemove', (event) => {
+            mouse.x = event.x;
+            mouse.y = event.y;
+        });
+        window.addEventListener('mouseout', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        // Initialize and start animation
+        resizeCanvas();
+        initParticles();
+        animate();
+
+        // Form validation (optional client-side validation)
+        document.getElementById('signinForm').addEventListener('submit', function(event) {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                event.preventDefault();
+                alert('Please fill in all fields.');
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>
