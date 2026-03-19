@@ -56,6 +56,8 @@ PDF Report + Crime Clip Export
 
 ![System Architecture](assets/SYSTEM%20ARCHITECHURE.jpg)
 
+*Three-tier architecture: Frontend (Flask UI) → Backend pipeline (5 AI models in sequence) → Database (MongoDB for auth and history)*
+
 ---
 
 ## Results
