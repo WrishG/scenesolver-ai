@@ -192,4 +192,6 @@ python app_demo.py
 
 **Wrish** — [Wrishg@gmail.com](mailto:Wrishg@gmail.com)
 
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-wrishg-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/wrishg/)
 🔗 [GitHub Repo](https://github.com/WrishG/scenesolver-ai)
+
