@@ -66,12 +66,21 @@ PDF Report + Crime Clip Export
 
 ### Per-class Metrics
 
-| | Binary Classifier | Multi-class Classifier |
-|---|---|---|
-| **Metric chart** | ![Binary Metrics](assets/Binary_Classifier_-Crime_vs._Normal-_metrics.png) | ![Multi-class Metrics](assets/Multi-class_Classifier_-5_Crime_Types-_metrics.png) |
-| **Confusion matrix** | ![Binary CM](assets/Binary_Classifier_-Crime_vs._Normal-_confusion_matrix.png) | ![Multi-class CM](assets/Multi-class_Classifier_-5_Crime_Types-_confusion_matrix.png) |
+**Binary Classifier (Crime vs Normal)**
 
+| Precision / Recall / F1 | Confusion Matrix |
+|---|---|
+| ![Binary Metrics](assets/Binary_Classifier_-Crime_vs._Normal-_metrics.png) | ![Binary Confusion Matrix](assets/Binary_Classifier_-Crime_vs._Normal-_confusion_matrix.png) |
 
+**Multi-class Classifier (5 Crime Types)**
+
+| Precision / Recall / F1 | Confusion Matrix |
+|---|---|
+| ![Multi-class Metrics](assets/Multi-class_Classifier_-5_Crime_Types-_metrics.png) | ![Multi-class Confusion Matrix](assets/Multi-class_Classifier_-5_Crime_Types-_confusion_matrix.png) |
+
+> Strong diagonal concentration in both matrices confirms minimal misclassification across all classes.
+
+---
 
 ## Key Features
 
