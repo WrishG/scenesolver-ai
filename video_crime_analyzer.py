@@ -282,7 +282,7 @@ def process_video(
                 pending_crime_label = None
 
         if frame_idx % FRAME_INTERVAL == 0:
-            print(f"DEBUG: Sampling frame {frame_idx}")
+
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             gray = cv2.GaussianBlur(gray, (21, 21), 0)
             motion_detected = True
