@@ -3,7 +3,8 @@ import sys
 import time
 import traceback
 import datetime
-from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, session
+from typing import Any, Callable
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, session, Response
 from werkzeug.security import generate_password_hash, check_password_hash
 from pymongo import MongoClient
 from functools import wraps
@@ -93,9 +94,9 @@ def load_summarizer_if_needed():
     return summarizer_pipeline_global
 
 # --- Auth Decorator ---
-def login_required(f):
+def login_required(f: Callable) -> Callable:
     @wraps(f)
-    def decorated_function(*args, **kwargs):
+    def decorated_function(*args: Any, **kwargs: Any) -> Response:
         if 'username' not in session:
             flash('Please log in to access this page.', 'error')
             return redirect(url_for('signin'))
