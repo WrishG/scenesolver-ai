@@ -497,6 +497,24 @@ def feedback():
         return redirect(url_for('feedback'))
     return render_template('feedback.html', username=session.get('username'))
 
+# --- SEO & Static Files ---
+@app.route('/robots.txt')
+def robots():
+    return send_from_directory(app.static_folder, 'robots.txt')
+
+@app.route('/sitemap.xml')
+def sitemap():
+    return send_from_directory(app.static_folder, 'sitemap.xml')
+
+# --- Error Handlers ---
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html', username=session.get('username')), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html', username=session.get('username')), 500
+
 # --- Main Execution Block ---
 if __name__ == '__main__':
     app.run(debug=True)

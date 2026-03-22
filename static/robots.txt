@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /static/uploads/
+Disallow: /history
+Disallow: /feedback
+
+Sitemap: https://scenesolver-ai.onrender.com/sitemap.xml

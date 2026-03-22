@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SceneSolver — Server Error</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --color-primary-blue: #0f56eb; }
+        body { font-family: 'Inter', sans-serif; background-color: #0d1117; color: #e5e7eb; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        #background-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-color: #0d1117; }
+        .glass-card { background: rgba(13, 17, 23, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(48, 54, 61, 0.5); box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37); animation: cardFadeIn 1s ease-out forwards; }
+        @keyframes cardFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .btn-glow { background: linear-gradient(to right, #0f56eb, #1976d2); color: #fff; font-weight: 600; border-radius: 0.75rem; padding: 0.8rem 2rem; transition: all 0.3s ease; box-shadow: 0 0 15px rgba(15,86,235,0.4); }
+        .btn-glow:hover { transform: translateY(-3px); box-shadow: 0 0 25px rgba(15,86,235,0.6); }
+    </style>
+</head>
+<body class="antialiased">
+    <canvas id="background-animation"></canvas>
+    <div class="glass-card rounded-3xl p-10 max-w-md w-full text-center mx-4">
+        <p class="text-8xl font-poppins font-bold text-red-500">500</p>
+        <h1 class="font-poppins text-2xl font-bold text-white mt-4 mb-2">Internal Server Error</h1>
+        <p class="text-gray-400 text-sm mb-8">Something went wrong on our end. Please try again in a moment.</p>
+        <a href="{{ url_for('home') }}" class="btn-glow inline-block">← Back to Home</a>
+    </div>
+    <script>
+        const canvas = document.getElementById('background-animation');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); }
+        function init() { particles = []; for (let i = 0; i < Math.floor((canvas.width * canvas.height) / 10000); i++) particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 0.2, vy: (Math.random() - 0.5) * 0.2, r: Math.random() * 1.5 + 0.5, a: Math.random() * 0.5 + 0.2 }); }
+        function draw() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.x += p.vx; p.y += p.vy; if (p.x < 0 || p.x > canvas.width) p.vx *= -1; if (p.y < 0 || p.y > canvas.height) p.vy *= -1; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fillStyle = `rgba(15,86,235,${p.a})`; ctx.fill(); }); requestAnimationFrame(draw); }
+        window.addEventListener('resize', resize); resize(); draw();
+    </script>
+</body>
+</html>
